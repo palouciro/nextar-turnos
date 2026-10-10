@@ -58,7 +58,7 @@ function sanitizeParam(value: string): string {
 export function buildTemplateParams(turno: Turno, id: string): string[] {
   const values: Record<(typeof TEMPLATE_PARAM_ORDER)[number], string> = {
     id,
-    servicio: SERVICE_LABELS[turno.servicio],
+    servicio: turno.servicio.map((id) => SERVICE_LABELS[id]).join(', '),
     nombre: turno.nombre,
     telefono: turno.telefono,
     email: turno.email,
@@ -73,7 +73,7 @@ export function buildTemplateParams(turno: Turno, id: string): string[] {
 export function buildPlainMessage(turno: Turno, id: string): string {
   return [
     `📅 Nuevo turno #${id}`,
-    `Servicio: ${SERVICE_LABELS[turno.servicio]}`,
+    `Servicio: ${turno.servicio.map((id) => SERVICE_LABELS[id]).join(', ')}`,
     `Cliente: ${turno.nombre}`,
     `WhatsApp: ${turno.telefono}`,
     `Email: ${turno.email || '-'}`,

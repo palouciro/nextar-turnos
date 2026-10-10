@@ -1,6 +1,6 @@
-import { Loader2, Send } from 'lucide-react';
+import { Check, Loader2, Send } from 'lucide-react';
 import { useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
-import { SERVICES, slotsFor, todayISO } from '../config/business';
+import { SERVICES, slotsFor, todayISO, type ServiceId } from '../config/business';
 import { ApiError, crearTurno, type TurnoResponse } from '../lib/api';
 import {
   EMPTY_VALUES,
@@ -48,6 +48,16 @@ export function BookingForm() {
     (field: BookingField) => (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
       setField(field, e.target.value);
   const onBlur = (field: BookingField) => () => setTouched((prev) => ({ ...prev, [field]: true }));
+
+  const onToggleService = (serviceId: ServiceId) => () => {
+    setValues((prev) => {
+      const has = prev.servicio.includes(serviceId);
+      const servicio = has ? prev.servicio.filter((s) => s !== serviceId) : [...prev.servicio, serviceId];
+      return { ...prev, servicio };
+    });
+    setServerFieldErrors((prev) => ({ ...prev, servicio: undefined }));
+    setServerError(null);
+  };
 
   const reset = () => {
     setValues(EMPTY_VALUES);
@@ -108,24 +118,24 @@ export function BookingForm() {
     <form ref={formRef} onSubmit={onSubmit} noValidate className="space-y-6 text-slate-900">
       <fieldset aria-describedby={servicioError ? 'servicio-error' : undefined}>
         <legend className="mb-2 text-sm font-semibold text-slate-800">
-          Servicio{' '}
+          Servicios{' '}
           <span className="text-nx-violet-600" aria-hidden="true">
             *
           </span>
         </legend>
+        <p className="mb-2 text-xs text-slate-500">Podés elegir más de uno.</p>
         <div className="grid gap-2">
           {SERVICES.map((s) => {
-            const checked = values.servicio === s.id;
+            const checked = values.servicio.includes(s.id);
             return (
               <label key={s.id} className="relative block cursor-pointer">
                 <input
-                  type="radio"
+                  type="checkbox"
                   name="servicio"
                   value={s.id}
                   checked={checked}
-                  onChange={onText('servicio')}
+                  onChange={onToggleService(s.id)}
                   onBlur={onBlur('servicio')}
-                  required
                   className="peer sr-only"
                 />
                 <span
@@ -139,11 +149,11 @@ export function BookingForm() {
                   <span
                     aria-hidden="true"
                     className={[
-                      'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2',
-                      checked ? 'border-nx-violet-600' : 'border-slate-400',
+                      'flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition',
+                      checked ? 'border-nx-violet-600 bg-nx-violet-600' : 'border-slate-400',
                     ].join(' ')}
                   >
-                    {checked && <span className="h-2.5 w-2.5 rounded-full bg-nx-violet-600" />}
+                    {checked && <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} />}
                   </span>
                   {s.title}
                 </span>

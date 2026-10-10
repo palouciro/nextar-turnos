@@ -5,7 +5,9 @@ const PHONE_RE = /^\+?\d{8,15}$/;
 
 export const turnoSchema = z
   .object({
-    servicio: z.enum(SERVICE_IDS, { errorMap: () => ({ message: 'Elegí un servicio.' }) }),
+    servicio: z
+      .array(z.enum(SERVICE_IDS, { errorMap: () => ({ message: 'Elegí un servicio.' }) }))
+      .min(1, 'Elegí al menos un servicio.'),
     nombre: z
       .string({ required_error: 'Ingresá tu nombre y apellido.' })
       .trim()

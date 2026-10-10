@@ -42,17 +42,20 @@ Domingos no se atiende (no se pueden elegir). Los horarios salen de tu historia 
 
 Si Meta rechaza el envío (template no aprobado, token vencido, etc.), el server lo registra en el log (sin datos del cliente) y le devuelve al cliente el botón de fallback `wa.me`, así el turno no se pierde.
 
-## Deploy
+## Deploy (un solo servicio)
 
-**Backend (Render o Railway)**
-- Root directory: `server` · Build: `npm install && npm run build` · Start: `npm start`
-- Variables: las de `server/.env.example`. `CLIENT_ORIGIN` = URL de tu front (ej. `https://nextar-turnos.vercel.app`).
-- Probá `https://TU-API/api/health`.
+En **Render** subí este mismo repositorio como un solo **Web Service**:
 
-**Frontend (Vercel o Netlify)**
-- Root directory: `client` · Build: `npm run build` · Output: `dist`
-- Variable de entorno: `VITE_API_URL=https://TU-API` (sin `/` final).
-- Después poné el link del front en tu perfil de Instagram.
+- **Root directory:** `.` (raíz)
+- **Build command:** `npm install && npm run build`
+- **Start command:** `npm start`
+- **Variables de entorno:** las de `server/.env.example` (al menos `WHATSAPP_DESTINO`; `PORT` lo define Render solo).
+
+El server compilado sirve también el front ya construido (`client/dist`), así que con un solo servicio tenés la web + la API. Probá `https://TU-URL/api/health` y después el link del front directamente.
+
+Alternativa en dos servicios (opcional):
+- **Backend** en Render/Railway: Root directory `server` · Build `npm install && npm run build` · Start `npm start`. `CLIENT_ORIGIN` = URL de tu front.
+- **Frontend** en Vercel/Netlify: Root directory `client` · Build `npm run build` · Output `dist` · `VITE_API_URL=https://TU-API` (sin `/` final).
 
 Nota: en el plan gratuito de Render el server se duerme; el primer turno después de un rato puede tardar unos segundos.
 

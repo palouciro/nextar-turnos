@@ -1,4 +1,7 @@
 import { randomUUID } from 'node:crypto';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import cors from 'cors';
 import express, { type ErrorRequestHandler, type Request, type Response } from 'express';
 import rateLimit from 'express-rate-limit';
@@ -6,6 +9,12 @@ import helmet from 'helmet';
 import { env } from './config.js';
 import { turnoSchema } from './schema.js';
 import { buildWaLink, sendTurno } from './whatsapp.js';
+
+// En producción este mismo proceso también sirve el front compilado (client/dist),
+// así el deploy es un solo servicio en Render/Railway.
+const SERVER_DIR = path.dirname(fileURLToPath(import.meta.url));
+const CLIENT_DIST = path.resolve(SERVER_DIR, '../../client/dist');
+const HAS_CLIENT = existsSync(CLIENT_DIST);
 
 const app = express();
 app.set('trust proxy', 1); // Render/Railway van detrás de un proxy
@@ -48,7 +57,7 @@ app.post('/api/turnos', turnosLimiter, async (req: Request, res: Response) => {
     return;
   }
 
-  console.log(`[turnos] ${id} servicio=${turno.servicio} fecha=${turno.fecha} whatsapp=${result.status}`);
+  console.log(`[turnos] ${id} servicio=${turno.servicio.join(',')} fecha=${turno.fecha} whatsapp=${result.status}`);
   res.status(201).json({
     ok: true,
     turnoId: id,
@@ -57,6 +66,15 @@ app.post('/api/turnos', turnosLimiter, async (req: Request, res: Response) => {
     waLink: result.status === 'fallback' ? waLink : undefined,
   });
 });
+
+// Front compilado (modo producción): sirve estáticos y hace SPA fallback a index.html.
+if (HAS_CLIENT) {
+  app.use(express.static(CLIENT_DIST, { index: 'index.html', maxAge: '1h' }));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(CLIENT_DIST, 'index.html'));
+  });
+}
 
 app.use((_req, res) => {
   res.status(404).json({ error: 'Ruta no encontrada.' });

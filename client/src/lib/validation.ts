@@ -5,7 +5,9 @@ const PHONE_RE = /^\+?\d{8,15}$/;
 
 export const bookingSchema = z
   .object({
-    servicio: z.enum(SERVICE_IDS, { errorMap: () => ({ message: 'Elegí un servicio.' }) }),
+    servicio: z
+      .array(z.enum(SERVICE_IDS, { errorMap: () => ({ message: 'Elegí un servicio.' }) }))
+      .min(1, 'Elegí al menos un servicio.'),
     nombre: z
       .string()
       .trim()
@@ -37,10 +39,18 @@ export type BookingField = keyof BookingData;
 export type BookingErrors = Partial<Record<BookingField, string>>;
 
 /** Valores crudos del formulario (todo string, aún sin validar). */
-export type BookingValues = Record<BookingField, string>;
+export type BookingValues = {
+  servicio: string[];
+  nombre: string;
+  telefono: string;
+  email: string;
+  fecha: string;
+  horario: string;
+  descripcion: string;
+};
 
 export const EMPTY_VALUES: BookingValues = {
-  servicio: '',
+  servicio: [],
   nombre: '',
   telefono: '',
   email: '',

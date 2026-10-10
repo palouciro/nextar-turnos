@@ -10,12 +10,13 @@ interface Props {
 }
 
 export function BookingSuccess({ data, result, onReset }: Props) {
-  const service = SERVICES.find((s) => s.id === data.servicio);
+  const selectedServices = SERVICES.filter((s) => data.servicio.includes(s.id));
+  const serviceLabel = selectedServices.length > 1 ? 'Servicios' : 'Servicio';
   const slot = slotsFor(data.fecha).find((s) => s.id === data.horario);
   const needsManualSend = result.whatsapp === 'fallback' && Boolean(result.waLink);
 
   const rows: [string, string][] = [
-    ['Servicio', service?.title ?? data.servicio],
+    [serviceLabel, selectedServices.map((s) => s.title).join(', ')],
     ['Nombre', data.nombre],
     ['Teléfono', data.telefono],
     ...(data.email ? ([['Email', data.email]] as [string, string][]) : []),
