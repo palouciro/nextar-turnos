@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-nx-night font-sans text-nx-silver antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+  ::selection {
+    @apply bg-nx-violet-600 text-white;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-nx-violet-400 ring-offset-2 ring-offset-nx-night;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    * {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-nx-violet-600 to-nx-violet-500 px-6 py-3 font-display font-semibold tracking-wide text-white shadow-glow-sm transition hover:brightness-110 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:brightness-100;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-nx-violet-500/50 px-6 py-3 font-display font-semibold tracking-wide text-nx-violet-300 transition hover:bg-nx-violet-800/40;
+  }
+  .glow-text {
+    text-shadow: 0 0 28px rgba(144, 85, 200, 0.55);
+  }
+}

@@ -1,0 +1,12 @@
+Poné acá tus imágenes (los nombres ya están referenciados en el código):
+
+  logo.png         -> tu logo NX real (opcional; después poné logoSrc: '/img/logo.png' en src/config/business.ts)
+  hero.jpg         -> foto de fondo del inicio (opcional, 1600x900 aprox.)
+  servicio-1.jpg   -> Diagnóstico y Análisis de Sistema
+  servicio-2.jpg   -> Servicio Técnico Especializado
+  servicio-3.jpg   -> Seguridad Digital y Desinfección
+  servicio-4.jpg   -> Armado de PC a Medida
+  servicio-5.jpg   -> Asesoramiento y Gestión de Componentes
+
+Si un archivo no existe, la app muestra un ícono en su lugar (no rompe nada).
+Tamaño recomendado de servicio-N.jpg: 800x500.
