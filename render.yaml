@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: nextar-turnos
+    runtime: node
+    repo: https://github.com/palouciro/nextar-turnos
+    plan: free
+    region: oregon
+    healthCheckPath: /api/health
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: WHATSAPP_DESTINO
+        sync: false
